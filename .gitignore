@@ -1,0 +1,47 @@
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+/node_modules
+yarn.lock
+package-lock.json
+
+# Frontend Build
+frontend/dist/
+frontend/.lovable/
+frontend/coverage/
+
+# Backend
+backend/logs/
+backend/tmp/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Temporary Files
+*.log
+*.pid
+*.tmp
+
+# Credentials & Secrets
+*.key
+*.pem
+token.txt
+cookies.txt
+credentials.json
+
+# Test Files (keep source, remove artifacts)
+coverage/
+.nyc_output/
+
+# OS
+Thumbs.db
+.DS_Store

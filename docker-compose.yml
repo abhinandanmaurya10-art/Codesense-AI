@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  # Backend API
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: codesense-backend
+    ports:
+      - "5001:5001"
+    environment:
+      - NODE_ENV=production
+      - PORT=5001
+      - MONGODB_URI=mongodb://mongo:27017/codesense-ai
+    env_file:
+      - backend/.env.production
+    depends_on:
+      mongo:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - codesense-network
+
+  # Frontend
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: codesense-frontend
+    ports:
+      - "80:80"
+    environment:
+      - VITE_API_URL=http://backend:5001/api
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - codesense-network
+
+  # MongoDB
+  mongo:
+    image: mongo:7-alpine
+    container_name: codesense-mongo
+    volumes:
+      - mongo_data:/data/db
+      - mongo_config:/data/configdb
+    environment:
+      - MONGO_INITDB_DATABASE=codesense-ai
+    ports:
+      - "27017:27017"
+    restart: unless-stopped
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - codesense-network
+
+volumes:
+  mongo_data:
+    driver: local
+  mongo_config:
+    driver: local
+
+networks:
+  codesense-network:
+    driver: bridge
