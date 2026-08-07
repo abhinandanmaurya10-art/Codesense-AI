@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const passport = require('passport');
 const { refreshCookieOptions } = require('../services/tokenService');
 const env = require('../config/env');
+const { getGithubAuthUrl } = require('../services/authService');
 
 const setRefreshCookie = (res, token) => res.cookie('refreshToken', token, refreshCookieOptions);
 
@@ -19,10 +20,9 @@ const githubLogin = (req, res, next) => {
     path: '/api',
   });
 
-  return passport.authenticate('github', {
-    scope: ['read:user', 'user:email'],
-    state,
-  })(req, res, next);
+  const authUrl = getGithubAuthUrl(state);
+  console.log('[github oauth] redirecting to', authUrl);
+  return res.redirect(authUrl);
 };
 
 const githubCallback = (req, res, next) => {

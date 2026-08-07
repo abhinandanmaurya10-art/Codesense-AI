@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const User = require('../models/User');
 const ApiError = require('../utils/apiError');
+const env = require('../config/env');
 const {
   signAccessToken,
   signRefreshToken,
@@ -48,21 +49,24 @@ async function refresh(refreshToken) {
   return issueTokens(user);
 }
 
-function getGithubAuthUrl() {
-  if (!process.env.GITHUB_CLIENT_ID) {
+function getGithubAuthUrl(state) {
+  if (!env.GITHUB_CLIENT_ID || !env.GITHUB_CALLBACK_URL) {
     throw ApiError.internal('GitHub OAuth is not configured');
   }
   const params = new URLSearchParams({
-    client_id: process.env.GITHUB_CLIENT_ID,
-    redirect_uri: process.env.GITHUB_CALLBACK_URL,
+    client_id: env.GITHUB_CLIENT_ID,
+    redirect_uri: env.GITHUB_CALLBACK_URL,
     scope: 'read:user user:email',
     allow_signup: 'true',
   });
+  if (state) {
+    params.set('state', state);
+  }
   return `https://github.com/login/oauth/authorize?${params.toString()}`;
 }
 
 async function githubSignIn({ code }) {
-  if (!process.env.GITHUB_CLIENT_ID || !process.env.GITHUB_CLIENT_SECRET || !process.env.GITHUB_CALLBACK_URL) {
+  if (!env.GITHUB_CLIENT_ID || !env.GITHUB_CLIENT_SECRET || !env.GITHUB_CALLBACK_URL) {
     throw ApiError.internal('GitHub OAuth is not configured');
   }
 
@@ -73,10 +77,10 @@ async function githubSignIn({ code }) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      client_id: process.env.GITHUB_CLIENT_ID,
-      client_secret: process.env.GITHUB_CLIENT_SECRET,
+      client_id: env.GITHUB_CLIENT_ID,
+      client_secret: env.GITHUB_CLIENT_SECRET,
       code,
-      redirect_uri: process.env.GITHUB_CALLBACK_URL,
+      redirect_uri: env.GITHUB_CALLBACK_URL,
     }),
   });
 

@@ -131,20 +131,20 @@ cd frontend
 cp .env.example .env
 ```
 
-Set `VITE_API_URL` to your backend URL.
+Set `VITE_API_BASE_URL` to your backend URL.
 
 ## OAuth Setup
 
 ### GitHub OAuth
 1. Go to https://github.com/settings/developers
 2. Create new OAuth App
-3. Set Authorization callback URL: `http://localhost:5001/api/auth/github/callback`
+3. Set Authorization callback URL to your backend callback URL, for example `https://your-backend-domain.com/api/auth/github/callback`
 4. Copy Client ID & Secret to `.env`
 
 ### Google OAuth
 1. Go to https://console.cloud.google.com
 2. Create OAuth 2.0 credentials (Web Application)
-3. Add redirect URI: `http://localhost:5001/api/auth/google/callback`
+3. Add redirect URI to your backend callback URL, for example `https://your-backend-domain.com/api/auth/google/callback`
 4. Copy Client ID & Secret to `.env`
 
 For detailed setup, see [OAUTH_SETUP.md](OAUTH_SETUP.md).

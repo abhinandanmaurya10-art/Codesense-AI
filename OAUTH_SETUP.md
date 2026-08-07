@@ -19,10 +19,10 @@ This guide will help you set up GitHub and Google OAuth authentication for the C
 2. Click "New OAuth App"
 3. Fill in the form:
    - **Application name**: `CodeSense AI`
-   - **Homepage URL**: `http://localhost:5173` (or your frontend URL)
-   - **Authorization callback URL**: `http://localhost:5001/api/auth/github/callback`
+   - **Homepage URL**: your frontend URL (for example `https://your-frontend-domain.com`)
+   - **Authorization callback URL**: your backend callback URL, for example `https://your-backend-domain.com/api/auth/github/callback`
    
-   > **Note**: If your backend runs on a different port, update the callback URL accordingly
+   > **Note**: If your backend runs on a different port or domain, update the callback URL accordingly
 
 4. Click "Register application"
 5. Copy your credentials:
@@ -35,7 +35,9 @@ This guide will help you set up GitHub and Google OAuth authentication for the C
 # In backend/.env
 GITHUB_CLIENT_ID=your_github_client_id_here
 GITHUB_CLIENT_SECRET=your_github_client_secret_here
-GITHUB_CALLBACK_URL=http://localhost:5001/api/auth/github/callback
+GITHUB_CALLBACK_URL=https://your-backend-domain.com/api/auth/github/callback
+BACKEND_URL=https://your-backend-domain.com
+FRONTEND_URL=https://your-frontend-domain.com
 ```
 
 ### Step 3: Test GitHub Login
@@ -70,12 +72,11 @@ GITHUB_CALLBACK_URL=http://localhost:5001/api/auth/github/callback
    - Name: `CodeSense AI Web`
    - Authorized JavaScript origins:
      ```
-     http://localhost:5173
-     http://localhost
+     https://your-frontend-domain.com
      ```
    - Authorized redirect URIs:
      ```
-     http://localhost:5001/api/auth/google/callback
+     https://your-backend-domain.com/api/auth/google/callback
      ```
    - Click "Create"
 
@@ -89,7 +90,7 @@ GITHUB_CALLBACK_URL=http://localhost:5001/api/auth/github/callback
 # In backend/.env
 GOOGLE_CLIENT_ID=your_google_client_id_here
 GOOGLE_CLIENT_SECRET=your_google_client_secret_here
-GOOGLE_CALLBACK_URL=http://localhost:5001/api/auth/google/callback
+GOOGLE_CALLBACK_URL=https://your-backend-domain.com/api/auth/google/callback
 ```
 
 ### Step 3: Test Google Login

@@ -53,7 +53,7 @@ See `.env.example` for all available options.
 
 | Name | Description |
 | --- | --- |
-| `PORT` | API port (default 5000) |
+| `PORT` | API port (default 5001) |
 | `MONGODB_URI` | MongoDB connection string |
 | `JWT_ACCESS_SECRET` | Secret for short-lived access tokens |
 | `JWT_REFRESH_SECRET` | Secret for refresh tokens |
@@ -62,9 +62,11 @@ See `.env.example` for all available options.
 | `GEMINI_API_KEY` | Google Gemini API key |
 | `GEMINI_MODEL` | `gemini-1.5-pro` or `gemini-1.5-flash` |
 | `FRONTEND_URL` | Allowed CORS origin(s), comma separated |
+| `BACKEND_URL` | Base backend URL used to build default provider callbacks |
+| `BASE_URL` | Alias for `BACKEND_URL` if needed |
 | `GITHUB_CLIENT_ID` | GitHub OAuth App client ID |
 | `GITHUB_CLIENT_SECRET` | GitHub OAuth App client secret |
-| `GITHUB_CALLBACK_URL` | GitHub OAuth callback URL (e.g. `http://localhost:5000/api/auth/github/callback`) |
+| `GITHUB_CALLBACK_URL` | GitHub OAuth callback URL (e.g. `https://your-backend-domain.com/api/auth/github/callback`) |
 
 Seeded accounts: `demo@codesense.ai` / `admin@codesense.ai`, password `Password123!`.
 
@@ -97,15 +99,17 @@ Supported languages: `javascript`, `typescript`, `python`, `go`, `rust`, `java`,
 To enable GitHub login, create a GitHub OAuth app at https://github.com/settings/developers and configure:
 
 - **Application name:** CodeSense AI
-- **Homepage URL:** `http://localhost:8080` or your frontend URL
-- **Authorization callback URL:** `http://localhost:5000/api/auth/github/callback`
+- **Homepage URL:** your frontend URL (for example `https://your-frontend-domain.com`)
+- **Authorization callback URL:** your backend callback URL, for example `https://your-backend-domain.com/api/auth/github/callback`
 
-Then add these values to `backend/.env`:
+Then add these values to `backend/.env` or Railway environment variables:
 
 ```env
 GITHUB_CLIENT_ID=your_github_client_id
 GITHUB_CLIENT_SECRET=your_github_client_secret
-GITHUB_CALLBACK_URL=http://localhost:5000/api/auth/github/callback
+GITHUB_CALLBACK_URL=https://your-backend-domain.com/api/auth/github/callback
+BACKEND_URL=https://your-backend-domain.com
+FRONTEND_URL=https://your-frontend-domain.com
 ```
 
 If your frontend runs on a LAN address, also include it in `FRONTEND_URL`:
@@ -119,7 +123,7 @@ Once configured, restart the backend and open the login page again.
 ## curl examples
 
 ```bash
-BASE=http://localhost:5000/api
+BASE=http://localhost:5001/api
 
 # Register
 curl -X POST $BASE/auth/register -H 'Content-Type: application/json' \

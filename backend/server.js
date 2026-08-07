@@ -1,10 +1,18 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 
 const app = require('./src/app');
 const env = require('./src/config/env');
 const connectDB = require('./src/config/db');
 
 async function bootstrap() {
+  if (!env.GITHUB_CLIENT_ID || !env.GITHUB_CLIENT_SECRET || !env.GITHUB_CALLBACK_URL) {
+    console.warn('[startup] GitHub OAuth is not fully configured. Set GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, and GITHUB_CALLBACK_URL. GitHub login will not work.');
+  }
+  if (!env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET || !env.GOOGLE_CALLBACK_URL) {
+    console.warn('[startup] Google OAuth is not fully configured. Set GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, and GOOGLE_CALLBACK_URL. Google login will not work.');
+  }
+
   await connectDB();
 
   let server;
