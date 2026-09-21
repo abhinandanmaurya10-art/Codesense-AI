@@ -206,8 +206,7 @@ docker-compose up -d
 ### Production Deployment
 See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed options:
 - Traditional VPS/EC2
-- Heroku
-- Vercel + Heroku
+- Vercel Monorepo
 - DigitalOcean App Platform
 
 ## Production Checklist

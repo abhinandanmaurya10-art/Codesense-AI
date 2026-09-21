@@ -47,7 +47,7 @@ npm preview
 See `.env.example` for template.
 
 **Required:**
-- `VITE_API_BASE_URL` - Backend API base URL (for example `http://localhost:5001/api` during local development or `https://your-backend-domain.com/api` in production)
+- `VITE_API_BASE_URL` - Backend API base URL (for local dev `http://localhost:5001/api`; for Vercel same-project deployment use `/api` or `https://your-project.vercel.app/api`)
 
 ## Project Structure
 

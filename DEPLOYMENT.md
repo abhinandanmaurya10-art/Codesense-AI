@@ -181,23 +181,30 @@ volumes:
   mongo_data:
 ```
 
-### Option 3: Vercel (Frontend) + Heroku (Backend)
+### Option 3: Vercel Monorepo (Frontend + Backend)
 
-**Frontend on Vercel:**
+This repository can deploy as a single Vercel project. The frontend is built from `frontend/`, and backend API routes are served by `api/[...slug].js` as serverless functions.
+
+**Deploy from repository root:**
 ```bash
-cd frontend
 vercel --prod
 ```
 
-**Backend on Heroku:**
-```bash
-cd backend
-heroku login
-heroku create your-app-name
-heroku config:set NODE_ENV=production
-heroku config:set --from .env.production
-git push heroku main
-```
+**Vercel environment variables:**
+- `NODE_ENV=production`
+- `MONGODB_URI`
+- `JWT_ACCESS_SECRET`
+- `JWT_REFRESH_SECRET`
+- `GEMINI_API_KEY`
+- `GEMINI_MODEL`
+- `BACKEND_URL=https://your-project.vercel.app`
+- `FRONTEND_URL=https://your-project.vercel.app`
+- `GITHUB_CLIENT_ID`
+- `GITHUB_CLIENT_SECRET`
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+
+If you use frontend and backend as separate Vercel projects, set `VITE_API_BASE_URL` to the backend URL in the frontend project.
 
 ## Production Checklist
 

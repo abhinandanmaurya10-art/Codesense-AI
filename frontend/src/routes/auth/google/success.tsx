@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { setAccessToken } from '@/lib/auth';
-import { apiRequest } from '@/lib/api';
+import { apiRequest, setAccessToken } from '@/lib/api';
 
 export const Route = createFileRoute('/auth/google/success')({
   head: () => ({

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { z } from "zod";
 import { Brand } from "@/components/brand";
 import { Button } from "@/components/ui/button";
@@ -104,10 +104,7 @@ function Login() {
             <GoogleLoginButton />
           </div>
           <p className="text-center text-sm text-muted-foreground">
-            Don&apos;t have an account?{" "}
-            <Link to="/dashboard" className="text-primary">
-              Try the demo
-            </Link>
+            New here? Continue with GitHub or Google to create your account.
           </p>
         </form>
       </div>

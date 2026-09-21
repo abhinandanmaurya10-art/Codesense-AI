@@ -1,3 +1,11 @@
+const path = require('path');
+const dotenv = require('dotenv');
+
+const envFile = path.resolve(__dirname, '../../.env');
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config({ path: envFile });
+}
+
 const required = (name, fallback) => {
   const value = process.env[name] ?? fallback;
   if (value === undefined || value === '') {
@@ -20,7 +28,7 @@ module.exports = {
   JWT_REFRESH_EXPIRES: process.env.JWT_REFRESH_EXPIRES || '7d',
   GEMINI_API_KEY: process.env.GEMINI_API_KEY || '',
   GEMINI_MODEL: process.env.GEMINI_MODEL || 'models/gemini-2.5-flash',
-  FRONTEND_URL: process.env.FRONTEND_URL || 'http://localhost:5173',
+  FRONTEND_URL: process.env.FRONTEND_URL || BACKEND_URL || 'http://localhost:5173',
   GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID || '',
   GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET || '',
   OAUTH_CALLBACK_URL: process.env.OAUTH_CALLBACK_URL || '',

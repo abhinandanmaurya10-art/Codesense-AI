@@ -1,10 +1,33 @@
 import { Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { BarChart3, Clock3, FilePlus2, LogOut, Settings, UserRound } from "lucide-react";
 import { Brand } from "@/components/brand";
 import { logoutUser } from "@/lib/auth";
+import { getAccessToken, refreshAccessToken } from "@/lib/api";
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
+  const [authenticated, setAuthenticated] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+
+    async function restoreSession() {
+      if (getAccessToken() || (await refreshAccessToken())) {
+        if (active) setAuthenticated(true);
+        return;
+      }
+
+      if (active) {
+        navigate({ to: "/login", replace: true });
+      }
+    }
+
+    void restoreSession();
+    return () => {
+      active = false;
+    };
+  }, [navigate]);
 
   async function handleLogout() {
     try {
@@ -13,6 +36,14 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     } catch (err) {
       console.error("Logout failed:", err);
     }
+  }
+
+  if (!authenticated) {
+    return (
+      <main className="grid min-h-screen place-items-center bg-background p-5 text-muted-foreground">
+        Restoring your secure session…
+      </main>
+    );
   }
 
   return (

@@ -102,14 +102,14 @@ To enable GitHub login, create a GitHub OAuth app at https://github.com/settings
 - **Homepage URL:** your frontend URL (for example `https://your-frontend-domain.com`)
 - **Authorization callback URL:** your backend callback URL, for example `https://your-backend-domain.com/api/auth/github/callback`
 
-Then add these values to `backend/.env` or Railway environment variables:
+Then add these values to `backend/.env` or Vercel environment variables:
 
 ```env
 GITHUB_CLIENT_ID=your_github_client_id
 GITHUB_CLIENT_SECRET=your_github_client_secret
-GITHUB_CALLBACK_URL=https://your-backend-domain.com/api/auth/github/callback
-BACKEND_URL=https://your-backend-domain.com
-FRONTEND_URL=https://your-frontend-domain.com
+GITHUB_CALLBACK_URL=https://your-project.vercel.app/api/auth/github/callback
+BACKEND_URL=https://your-project.vercel.app
+FRONTEND_URL=https://your-project.vercel.app
 ```
 
 If your frontend runs on a LAN address, also include it in `FRONTEND_URL`:
@@ -173,5 +173,6 @@ A ready-to-import Postman collection lives at `postman_collection.json`.
 
 ## Deployment
 
-Stateless — deploy to Render, Railway, or Fly. Set the env vars, point `MONGODB_URI` at Atlas,
-and set `FRONTEND_URL` to your deployed frontend origin. Start command: `npm start`.
+Stateless — deploy to Vercel serverless or any stateless Node host. Set the env vars, point `MONGODB_URI` at Atlas, and set `FRONTEND_URL` to your deployed frontend origin.
+
+For Vercel, deploy the repo root and let backend API routes execute under `/api/*`.
