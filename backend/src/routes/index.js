@@ -8,9 +8,7 @@ const { SUPPORTED_LANGUAGES } = require('../utils/validators');
 
 const router = express.Router();
 
-router.get('/health', (_req, res) =>
-  res.json({ success: true, data: { status: 'ok', uptime: process.uptime() } }),
-);
+router.get('/health', (req, res) => req.app.locals.health(req, res));
 router.get('/languages', (_req, res) => res.json({ success: true, data: SUPPORTED_LANGUAGES }));
 
 router.use('/auth/github', githubAuthRoutes);
