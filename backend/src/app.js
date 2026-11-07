@@ -7,6 +7,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const mongoose = require('mongoose');
 
 const env = require('./config/env');
+const connectDB = require('./config/db');
 const setupPassport = require('./config/passport');
 const passport = require('passport');
 const routes = require('./routes');
@@ -54,7 +55,14 @@ app.get('/', (_req, res) => res.json({
   success: true,
   data: { service: 'CodeSense AI API', health: '/health', api: '/api' },
 }));
-app.get('/health', health);
+app.get('/health', async (req, res) => {
+  try {
+    await connectDB();
+  } catch (error) {
+    console.error('[health] database connection failed:', error);
+  }
+  return health(req, res);
+});
 app.locals.health = health;
 app.use('/api', apiLimiter, routes);
 
