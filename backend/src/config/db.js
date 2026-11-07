@@ -15,8 +15,7 @@ module.exports = async function connectDB() {
       .connect(env.MONGODB_URI, { serverSelectionTimeoutMS: 10000 })
       .then((mongooseInstance) => mongooseInstance.connection)
       .catch((error) => {
-        // Do not cache a rejected connection attempt. Render can recover from
-        // a transient Atlas/network failure without requiring a process restart.
+        // Do not cache a rejected connection attempt so transient failures can be retried.
         cached.promise = null;
         throw error;
       });

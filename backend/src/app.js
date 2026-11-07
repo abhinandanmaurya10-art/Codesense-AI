@@ -49,8 +49,7 @@ const health = (_req, res) => {
   });
 };
 
-// Render uses this endpoint for service health checks. Keep the API-prefixed
-// variant below for existing clients.
+// Expose health checks at both the root and API-prefixed paths.
 app.get('/', (_req, res) => res.json({
   success: true,
   data: { service: 'CodeSense AI API', health: '/health', api: '/api' },
