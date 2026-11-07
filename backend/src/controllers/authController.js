@@ -1,6 +1,6 @@
 const authService = require('../services/authService');
 const { ok, created, asyncHandler } = require('../utils/response');
-const { refreshCookieOptions } = require('../services/tokenService');
+const { refreshCookieOptions, verifyRefreshToken } = require('../services/tokenService');
 
 const setRefreshCookie = (res, token) => res.cookie('refreshToken', token, refreshCookieOptions);
 
@@ -60,7 +60,8 @@ const logout = asyncHandler(async (req, res) => {
     }
   }
   await authService.logout(userId, token);
-  res.clearCookie('refreshToken', { ...refreshCookieOptions, expires: new Date(0) });
+  const { httpOnly, sameSite, secure, path } = refreshCookieOptions;
+  res.clearCookie('refreshToken', { httpOnly, sameSite, secure, path });
   return ok(res, null, 'Logged out');
 });
 

@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowRight, ShieldCheck } from "lucide-react";
 import { DashboardShell } from "@/components/dashboard-shell";
 import { Button } from "@/components/ui/button";
 
@@ -11,60 +11,26 @@ export const Route = createFileRoute("/settings")({
   ),
 });
 
-type Settings = {
-  preferredModel?: string;
-  enableHeuristicFallback?: boolean;
-};
-
-const STORAGE_KEY = "codesense_settings";
-
 function SettingsPage() {
-  const [settings, setSettings] = useState<Settings>({ preferredModel: "", enableHeuristicFallback: true });
-  const [saved, setSaved] = useState(false);
-
-  useEffect(() => {
-    const raw = typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEY) : null;
-    if (raw) setSettings(JSON.parse(raw));
-  }, []);
-
-  function save() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-    setSaved(true);
-    setTimeout(() => setSaved(false), 1500);
-  }
-
   return (
-    <div className="p-8">
-      <h2 className="mb-4 text-2xl font-semibold">Settings</h2>
-      <div className="max-w-xl space-y-4">
-        <div>
-          <label className="mb-2 block text-sm font-medium">Preferred AI Model</label>
-          <input
-            value={settings.preferredModel}
-            onChange={(e) => setSettings({ ...settings, preferredModel: e.target.value })}
-            placeholder="e.g. models/gemini-2.5-flash"
-            className="w-full rounded-xl border border-border px-3 py-2"
-          />
-          <p className="mt-2 text-sm text-muted-foreground">Note: model changes must also be set on the backend to take effect.</p>
+    <div className="p-5 md:p-8">
+      <h1 className="mb-4 text-2xl font-semibold">Settings</h1>
+      <section className="max-w-2xl rounded-2xl border border-border bg-panel p-6">
+        <div className="mb-4 flex items-center gap-3">
+          <ShieldCheck className="size-6 text-primary" />
+          <h2 className="text-lg font-semibold">AI review configuration</h2>
         </div>
-
-        <div>
-          <label className="flex items-center gap-3">
-            <input
-              type="checkbox"
-              checked={!!settings.enableHeuristicFallback}
-              onChange={(e) => setSettings({ ...settings, enableHeuristicFallback: e.target.checked })}
-            />
-            <span className="text-sm">Enable heuristic offline fallback</span>
-          </label>
-          <p className="mt-2 text-sm text-muted-foreground">When enabled, the app will surface a best-effort analysis if the AI provider is unreachable.</p>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <Button onClick={save}>Save</Button>
-          {saved && <span className="text-sm text-success">Saved</span>}
-        </div>
-      </div>
+        <p className="text-muted-foreground">
+          The AI provider, model, and fallback behavior are managed by the backend deployment. They
+          cannot be changed from this browser. API keys stay on the server and are never stored in
+          your account settings.
+        </p>
+        <Button asChild variant="hero" className="mt-6">
+          <Link to="/review">
+            Start a code review <ArrowRight />
+          </Link>
+        </Button>
+      </section>
     </div>
   );
 }

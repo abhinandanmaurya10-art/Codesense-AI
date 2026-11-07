@@ -2,24 +2,32 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { BarChart3, Clock3, FilePlus2, LogOut, Settings, UserRound } from "lucide-react";
 import { Brand } from "@/components/brand";
-import { logoutUser } from "@/lib/auth";
-import { getAccessToken, refreshAccessToken } from "@/lib/api";
+import { logoutUser, type AuthUser } from "@/lib/auth";
+import { apiRequest, getAccessToken, refreshAccessToken } from "@/lib/api";
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const [authenticated, setAuthenticated] = useState(false);
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [logoutError, setLogoutError] = useState("");
 
   useEffect(() => {
     let active = true;
 
     async function restoreSession() {
-      if (getAccessToken() || (await refreshAccessToken())) {
-        if (active) setAuthenticated(true);
-        return;
-      }
-
-      if (active) {
-        navigate({ to: "/login", replace: true });
+      try {
+        if (!getAccessToken() && !(await refreshAccessToken())) {
+          throw new Error("Session expired");
+        }
+        const response = await apiRequest<{ data?: { user: AuthUser }; user?: AuthUser }>("/auth/me");
+        const currentUser = response.data?.user ?? response.user;
+        if (!currentUser) throw new Error("Unable to load your account");
+        if (active) {
+          setUser(currentUser);
+          setAuthenticated(true);
+        }
+      } catch {
+        if (active) navigate({ to: "/login", replace: true });
       }
     }
 
@@ -30,13 +38,22 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   }, [navigate]);
 
   async function handleLogout() {
+    setLogoutError("");
     try {
-      logoutUser();
+      await logoutUser();
       await navigate({ to: "/login" });
     } catch (err) {
-      console.error("Logout failed:", err);
+      setLogoutError(err instanceof Error ? err.message : "Unable to log out. Please try again.");
     }
   }
+
+  const displayName = user?.name || "Account";
+  const initials = displayName
+    .split(/\s+/)
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 
   if (!authenticated) {
     return (
@@ -48,6 +65,24 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-background lg:grid lg:grid-cols-[17rem_1fr]">
+      <header className="flex items-center justify-between border-b border-border bg-panel-deep p-4 lg:hidden">
+        <Brand />
+        <button
+          onClick={handleLogout}
+          title="Logout"
+          aria-label="Logout"
+          className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+          type="button"
+        >
+          <LogOut className="size-4" />
+        </button>
+      </header>
+      <nav className="flex gap-2 overflow-x-auto border-b border-border p-3 text-sm text-muted-foreground lg:hidden">
+        <NavLink to="/dashboard" icon={BarChart3}>Dashboard</NavLink>
+        <NavLink to="/review" icon={FilePlus2}>New Review</NavLink>
+        <NavLink to="/history" icon={Clock3}>History</NavLink>
+        <NavLink to="/settings" icon={Settings}>Settings</NavLink>
+      </nav>
       <aside className="hidden min-h-screen border-r border-border bg-panel-deep lg:flex lg:flex-col">
         <div className="border-b border-border p-6">
           <Brand />
@@ -69,11 +104,11 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         </nav>
         <div className="mt-auto flex items-center gap-3 border-t border-border p-5">
           <div className="grid size-11 place-items-center rounded-full bg-gradient-to-br from-primary to-code-purple font-semibold">
-            AK
+            {initials}
           </div>
           <div className="flex-1">
-            <p className="font-medium">Alex K.</p>
-            <p className="text-sm text-muted-foreground">Pro Plan</p>
+            <p className="font-medium">{displayName}</p>
+            <p className="text-sm text-muted-foreground">{user?.email}</p>
           </div>
           <button
             onClick={handleLogout}
@@ -85,7 +120,14 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           </button>
         </div>
       </aside>
-      <main>{children}</main>
+      <main>
+        {logoutError && (
+          <p role="alert" className="border-b border-danger/40 bg-danger/10 p-3 text-sm text-danger">
+            {logoutError}
+          </p>
+        )}
+        {children}
+      </main>
     </div>
   );
 }
@@ -103,7 +145,7 @@ function NavLink({
     <Link
       to={to}
       activeProps={{ className: "bg-primary/15 text-primary" }}
-      className="flex items-center gap-3 rounded-xl px-4 py-3 transition-colors hover:bg-secondary hover:text-foreground"
+      className="flex shrink-0 items-center gap-3 rounded-xl px-4 py-3 transition-colors hover:bg-secondary hover:text-foreground"
     >
       <Icon className="size-5" />
       {children}

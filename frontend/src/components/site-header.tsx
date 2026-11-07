@@ -13,8 +13,14 @@ export function SiteHeader() {
         <Link to="/" hash="features" className="transition-colors hover:text-foreground">
           Features
         </Link>
-        <span>Pricing</span>
-        <span>Docs</span>
+        <a
+          href="https://github.com/abhinandanmaurya10-art/Codesense-AI#readme"
+          target="_blank"
+          rel="noreferrer"
+          className="transition-colors hover:text-foreground"
+        >
+          Docs
+        </a>
       </nav>
       <div className="hidden gap-2 md:flex">
         <Button asChild variant="nav">

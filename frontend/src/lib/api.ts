@@ -10,7 +10,8 @@ export function getAccessToken() {
 
 export function setAccessToken(token: string) {
   if (typeof window !== "undefined") {
-    localStorage.setItem("codesense_access_token", token);
+    if (token) localStorage.setItem("codesense_access_token", token);
+    else localStorage.removeItem("codesense_access_token");
   }
 }
 

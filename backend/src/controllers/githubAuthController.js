@@ -36,7 +36,7 @@ const githubCallback = (req, res, next) => {
 
     setRefreshCookie(res, authResult.refreshToken);
     const token = authResult.accessToken;
-    return res.redirect(`${env.FRONTEND_URL}/auth/github/success?token=${encodeURIComponent(token)}`);
+    return res.redirect(`${env.FRONTEND_URL}/auth/github/success#token=${encodeURIComponent(token)}`);
   })(req, res, next);
 };
 

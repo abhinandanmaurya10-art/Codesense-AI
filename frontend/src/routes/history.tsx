@@ -4,22 +4,34 @@ import { DashboardShell } from "@/components/dashboard-shell";
 import { apiRequest } from "@/lib/api";
 import { Link } from "@tanstack/react-router";
 
+type ReviewSummary = {
+  id: string;
+  title: string;
+  language: string;
+  createdAt: string;
+  status: string;
+  overallScore: number | null;
+  issueCount: number;
+};
+
 export const Route = createFileRoute("/history")({
   component: () => <DashboardShell><HistoryPage /></DashboardShell>,
 });
 
 function HistoryPage() {
-  const [reviews, setReviews] = useState<any[]>([]);
+  const [reviews, setReviews] = useState<ReviewSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
     setLoading(true);
-    apiRequest<any>("/reviews?page=1&limit=20")
-      .then((payload) => {
-        if (!mounted) return;
-        setReviews(payload.reviews || []);
+    apiRequest<{ data?: { reviews: ReviewSummary[] }; reviews?: ReviewSummary[] }>(
+      "/reviews?page=1&limit=20",
+    )
+    .then((payload) => {
+      if (!mounted) return;
+      setReviews(payload.data?.reviews ?? payload.reviews ?? []);
       })
       .catch((err) => {
         if (!mounted) return;
@@ -33,13 +45,13 @@ function HistoryPage() {
   }, []);
 
   useEffect(() => {
-    function handler(e: any) {
-      const newReview = e?.detail?.review;
+    function handler(event: Event) {
+      const newReview = (event as CustomEvent<{ review?: ReviewSummary }>).detail?.review;
       if (!newReview) return;
       setReviews((prev) => [newReview, ...prev]);
     }
-    window.addEventListener("codesense:review-created", handler as EventListener);
-    return () => window.removeEventListener("codesense:review-created", handler as EventListener);
+    window.addEventListener("codesense:review-created", handler);
+    return () => window.removeEventListener("codesense:review-created", handler);
   }, []);
 
   return (
@@ -54,17 +66,19 @@ function HistoryPage() {
       ) : (
         <div className="space-y-3">
           {reviews.map((r: any) => (
-            <div key={r._id} className="rounded-xl border border-border p-4">
+            <div key={r.id} className="rounded-xl border border-border p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <Link to={`/reviews/${r._id}`} className="font-semibold">
+                  <Link to="/reviews/$id" params={{ id: r.id }} className="font-semibold">
                     {r.title}
                   </Link>
                   <div className="text-sm text-muted-foreground">{r.language} · {new Date(r.createdAt).toLocaleString()}</div>
                 </div>
-                <div className="text-sm text-muted-foreground">{r.status}</div>
+                <div className="text-right text-sm text-muted-foreground">
+                  <div>{r.status}</div>
+                  <div>{r.issueCount} findings{r.overallScore == null ? "" : ` · Score ${r.overallScore}/10`}</div>
+                </div>
               </div>
-              <p className="mt-2 text-sm text-muted-foreground">{r.summary ?? r.excerpt ?? ''}</p>
             </div>
           ))}
         </div>

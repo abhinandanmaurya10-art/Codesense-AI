@@ -26,6 +26,7 @@ export async function loginUser(email: string, password: string) {
   return payload;
 }
 
-export function logoutUser() {
+export async function logoutUser() {
+  await apiRequest("/auth/logout", { method: "POST" });
   setAccessToken("");
 }

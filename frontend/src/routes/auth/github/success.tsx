@@ -9,20 +9,21 @@ export const Route = createFileRoute('/auth/github/success')({
   component: GitHubSuccess,
 });
 
-function parseTokenFromSearch(search) {
-  return new URLSearchParams(search).get('token');
+function parseTokenFromHash(hash: string) {
+  return new URLSearchParams(hash.slice(1)).get('token');
 }
 
 function GitHubSuccess() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = parseTokenFromSearch(window.location.search);
+    const token = parseTokenFromHash(window.location.hash);
     if (!token) {
       navigate({ to: '/login' });
       return;
     }
 
+    window.history.replaceState(null, '', window.location.pathname);
     setAccessToken(token);
 
     apiRequest('/auth/me', {

@@ -65,10 +65,24 @@ export function ReviewWorkspace() {
     reader.readAsText(file);
   }
 
-  const score = reviewResult?.overallScore ?? 63;
-  const statusText = reviewResult ? "Good work" : "Needs Work";
-  const statusStyle = reviewResult ? "text-success" : "text-warning";
+  const score = reviewResult?.overallScore;
+  const scorePercent = score == null ? 0 : Math.max(0, Math.min(100, score * 10));
+  const statusText = score == null ? "Not reviewed" : score >= 8 ? "Good work" : "Needs improvement";
+  const statusStyle = score == null ? "text-muted-foreground" : score >= 8 ? "text-success" : "text-warning";
   const [activeTab, setActiveTab] = useState<"syntax" | "logic" | "security">("syntax");
+
+  function downloadReview() {
+    const report = reviewResult
+      ? JSON.stringify({ language, code, result: reviewResult }, null, 2)
+      : code;
+    const blob = new Blob([report], { type: reviewResult ? "application/json" : "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = reviewResult ? "codesense-review.json" : `code.${language}`;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
 
   return (
     <div className="grid min-h-[calc(100vh-1px)] lg:grid-cols-[minmax(0,1fr)_minmax(22rem,0.95fr)]">
@@ -133,11 +147,7 @@ export function ReviewWorkspace() {
                 <Copy />
                 Copy
               </Button>
-              <Button
-                variant="panel"
-                size="sm"
-                onClick={() => alert("Download not yet implemented")}
-              >
+              <Button variant="panel" size="sm" onClick={downloadReview}>
                 <Download />
                 Download
               </Button>
@@ -174,9 +184,12 @@ export function ReviewWorkspace() {
       </section>
       <aside className="bg-panel">
         <div className="flex items-center gap-6 border-b border-border p-6">
-          <div className="grid size-24 place-items-center rounded-full bg-[conic-gradient(var(--primary)_63%,var(--secondary)_0)]">
+          <div
+            className="grid size-24 place-items-center rounded-full"
+            style={{ background: `conic-gradient(var(--primary) ${scorePercent}%, var(--secondary) 0)` }}
+          >
             <div className="grid size-16 place-items-center rounded-full bg-panel text-2xl font-semibold">
-              {score}
+              {score ?? "—"}
             </div>
           </div>
           <div>
@@ -223,7 +236,6 @@ export function ReviewWorkspace() {
                 "encrypt",
                 "password",
                 "auth",
-                "sanitize",
                 "sanitize",
               ];
               const logicKeywords = [

@@ -41,12 +41,13 @@ export async function createReview(payload: {
 
     const summary = createdReview
       ? {
-          _id: createdReview._id ?? createdReview.id,
+          id: createdReview._id?.toString?.() ?? createdReview.id,
           title: createdReview.title,
           language: createdReview.language,
           createdAt: createdReview.createdAt ?? new Date().toISOString(),
           status: createdReview.status ?? "completed",
-          summary: createdReview.result?.summary ?? (result?.summary ?? null),
+          overallScore: createdReview.result?.overallScore ?? result?.overallScore ?? null,
+          issueCount: createdReview.result?.issues?.length ?? result?.issues?.length ?? 0,
         }
       : null;
 

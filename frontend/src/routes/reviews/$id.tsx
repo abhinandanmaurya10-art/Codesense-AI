@@ -5,12 +5,17 @@ import { apiRequest } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/reviews/$id")({
-  component: ({ params }) => (
-    <DashboardShell>
-      <ReviewDetail id={params.id} />
-    </DashboardShell>
-  ),
+  component: ReviewRoute,
 });
+
+function ReviewRoute() {
+  const { id } = Route.useParams();
+  return (
+    <DashboardShell>
+      <ReviewDetail id={id} />
+    </DashboardShell>
+  );
+}
 
 function ReviewDetail({ id }: { id: string }) {
   const [loading, setLoading] = useState(true);
@@ -33,6 +38,17 @@ function ReviewDetail({ id }: { id: string }) {
     return () => { mounted = false; };
   }, [id]);
 
+  function downloadReview() {
+    if (!review) return;
+    const blob = new Blob([JSON.stringify(review, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `codesense-review-${id}.json`;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
   if (loading) return <div className="p-8">Loading…</div>;
   if (error) return <div className="p-8 text-danger">{error}</div>;
   if (!review) return <div className="p-8">Review not found.</div>;
@@ -45,7 +61,7 @@ function ReviewDetail({ id }: { id: string }) {
           <div className="text-sm text-muted-foreground">{review.language} · {new Date(review.createdAt).toLocaleString()}</div>
         </div>
         <div>
-          <Button variant="ghost">Download</Button>
+          <Button variant="ghost" onClick={downloadReview}>Download</Button>
         </div>
       </div>
 

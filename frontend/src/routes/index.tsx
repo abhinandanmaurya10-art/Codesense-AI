@@ -50,7 +50,7 @@ function Index() {
               </a>
             </Button>
             <Button asChild variant="panel" size="lg">
-              <a href="https://github.com" target="_blank" rel="noreferrer">
+              <a href="https://github.com/abhinandanmaurya10-art/Codesense-AI" target="_blank" rel="noreferrer">
                 <Github />
                 View on GitHub
               </a>
@@ -60,9 +60,9 @@ function Index() {
         <CodeReviewDemo />
         <section className="grid gap-5 py-16 sm:grid-cols-3">
           {[
-            ["2.4M+", "Reviews Generated", "primary"],
-            ["10", "Languages Supported", "purple"],
-            ["98.2%", "Accuracy Rate", "success"],
+            ["12", "Languages Supported", "primary"],
+            ["AI", "Assisted Code Analysis", "purple"],
+            ["Private", "Per-user Review History", "success"],
           ].map(([value, label, tone]) => (
             <div key={label} className="rounded-2xl border border-border bg-panel p-8 text-center">
               <p
