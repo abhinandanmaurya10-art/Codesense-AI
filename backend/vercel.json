@@ -3,6 +3,18 @@
   "functions": {
     "api/[...slug].js": {
       "maxDuration": 60
+    },
+    "api/auth/[action].js": {
+      "maxDuration": 60
+    },
+    "api/auth/[provider]/[action].js": {
+      "maxDuration": 60
+    },
+    "api/dashboard/[action].js": {
+      "maxDuration": 60
+    },
+    "api/reviews/[id].js": {
+      "maxDuration": 60
     }
   }
 }
