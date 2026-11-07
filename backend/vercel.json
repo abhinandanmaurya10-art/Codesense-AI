@@ -7,7 +7,10 @@
     "api/auth/[action].js": {
       "maxDuration": 60
     },
-    "api/auth/[provider]/[action].js": {
+    "api/auth/github/callback.js": {
+      "maxDuration": 60
+    },
+    "api/auth/google/callback.js": {
       "maxDuration": 60
     },
     "api/dashboard/[action].js": {
