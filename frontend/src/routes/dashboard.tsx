@@ -166,26 +166,83 @@ function Dashboard() {
               <h2 className="font-semibold">Quality trend</h2>
             </div>
             {stats.scoreTrend.length ? (
-              <>
-                <div className="flex h-48 items-end gap-3">
-                  {stats.scoreTrend.map((point, index) => (
+              stats.scoreTrend.length === 1 ? (
+                <div className="rounded-xl border border-border/70 bg-background/40 p-5">
+                  <p className="text-sm text-muted-foreground">Your first review score</p>
+                  <p className="mt-2 text-4xl font-semibold text-primary">
+                    {stats.scoreTrend[0].score == null
+                      ? "Pending"
+                      : `${stats.scoreTrend[0].score}/10`}
+                  </p>
+                  <div
+                    className="mt-4 h-2 overflow-hidden rounded-full bg-secondary"
+                    role="meter"
+                    aria-label="Quality score"
+                    aria-valuemin={0}
+                    aria-valuemax={10}
+                    aria-valuenow={stats.scoreTrend[0].score ?? 0}
+                  >
                     <div
-                      key={`${point.date}-${index}`}
-                      className="flex-1 rounded-t-md bg-primary/70"
-                      title={`${new Date(point.date).toLocaleDateString()}: ${point.score ?? "N/A"}/10`}
-                      style={{ height: `${Math.max(4, Math.min(100, (point.score ?? 0) * 10))}%` }}
+                      className="h-full rounded-full bg-gradient-to-r from-primary/70 to-primary"
+                      style={{
+                        width: `${Math.max(0, Math.min(100, (stats.scoreTrend[0].score ?? 0) * 10))}%`,
+                      }}
                     />
-                  ))}
+                  </div>
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    {new Date(stats.scoreTrend[0].date).toLocaleDateString()} · Complete more
+                    reviews to see your trend.
+                  </p>
                 </div>
-                <div className="mt-3 flex justify-between text-xs text-muted-foreground">
-                  <span>{new Date(stats.scoreTrend[0].date).toLocaleDateString()}</span>
-                  <span>
-                    {new Date(
-                      stats.scoreTrend[stats.scoreTrend.length - 1].date,
-                    ).toLocaleDateString()}
-                  </span>
+              ) : (
+                <div className="relative">
+                  <div className="pointer-events-none absolute inset-x-0 top-0 flex justify-between text-xs text-muted-foreground">
+                    <span>10</span>
+                    <span>Score / 10</span>
+                    <span>0</span>
+                  </div>
+                  <div
+                    className="relative mt-7 flex h-48 items-end gap-3 overflow-hidden rounded-lg border border-border/70 bg-background/40 px-4 pb-2 pt-3"
+                    role="img"
+                    aria-label={`Quality scores over time: ${stats.scoreTrend
+                      .map(
+                        (point) =>
+                          `${new Date(point.date).toLocaleDateString()}, ${point.score ?? "not scored"} out of 10`,
+                      )
+                      .join("; ")}`}
+                  >
+                    <div
+                      className="pointer-events-none absolute inset-0 flex flex-col justify-between px-3 py-3"
+                      aria-hidden="true"
+                    >
+                      {[0, 1, 2, 3].map((line) => (
+                        <div key={line} className="border-t border-border/50" />
+                      ))}
+                    </div>
+                    {stats.scoreTrend.map((point, index) => (
+                      <div
+                        key={`${point.date}-${index}`}
+                        className="relative z-10 min-w-0 flex-1 rounded-t-md bg-gradient-to-t from-primary/45 to-primary shadow-[0_0_16px_hsl(var(--primary)/0.12)]"
+                        title={`${new Date(point.date).toLocaleDateString()}: ${point.score ?? "N/A"}/10`}
+                        style={{
+                          height: `${point.score == null ? 0 : Math.max(4, Math.min(100, point.score * 10))}%`,
+                        }}
+                      />
+                    ))}
+                  </div>
+                  <div className="mt-2 flex justify-between gap-3 text-xs text-muted-foreground">
+                    <span>{new Date(stats.scoreTrend[0].date).toLocaleDateString()}</span>
+                    <span>
+                      {new Date(
+                        stats.scoreTrend[stats.scoreTrend.length - 1].date,
+                      ).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <p className="mt-3 text-center text-xs text-muted-foreground">
+                    {stats.scoreTrend.length} completed reviews
+                  </p>
                 </div>
-              </>
+              )
             ) : (
               <p className="text-sm text-muted-foreground">
                 Your quality trend will appear after you complete a review.
