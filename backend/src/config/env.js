@@ -1,8 +1,14 @@
 const path = require('path');
 const dotenv = require('dotenv');
 
+const isVercelDeployment = Boolean(
+  process.env.VERCEL ||
+    process.env.VERCEL_URL ||
+    process.env.VERCEL_ENV ||
+    process.env.FRONTEND_URL?.includes('.vercel.app'),
+);
 const envFile = path.resolve(__dirname, '../../.env');
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== 'production' && !isVercelDeployment) {
   dotenv.config({ path: envFile });
 }
 
@@ -16,22 +22,25 @@ const required = (name, fallback) => {
 
 const PORT = Number(process.env.PORT || 5001);
 const NODE_ENV = process.env.NODE_ENV || 'development';
+const isProductionDeployment = NODE_ENV === 'production' || isVercelDeployment;
 const configuredBackendUrl = process.env.BACKEND_URL || process.env.BASE_URL;
 const vercelProductionHost = process.env.VERCEL_PROJECT_PRODUCTION_URL;
 const deployedBackendUrl = vercelProductionHost
-  ? `https://${vercelProductionHost}`
+  ? /^https?:\/\//i.test(vercelProductionHost)
+    ? vercelProductionHost
+    : `https://${vercelProductionHost}`
   : 'https://codesense-ai-5prf.vercel.app';
 const isLocalUrl = (value) =>
   value.split(',').some((url) => /^https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?(?:\/|$)/i.test(url.trim()));
 const BACKEND_URL =
-  NODE_ENV === 'production' && configuredBackendUrl && isLocalUrl(configuredBackendUrl)
+  isProductionDeployment && configuredBackendUrl && isLocalUrl(configuredBackendUrl)
     ? deployedBackendUrl
-    : configuredBackendUrl || (NODE_ENV === 'production' ? deployedBackendUrl : `http://localhost:${PORT}`);
+    : configuredBackendUrl || (isProductionDeployment ? deployedBackendUrl : `http://localhost:${PORT}`);
 const configuredFrontendUrl = process.env.FRONTEND_URL;
 const FRONTEND_URL =
-  NODE_ENV === 'production' && configuredFrontendUrl && isLocalUrl(configuredFrontendUrl)
+  isProductionDeployment && configuredFrontendUrl && isLocalUrl(configuredFrontendUrl)
     ? 'https://codesense-ai-4jnb.vercel.app'
-    : configuredFrontendUrl || (NODE_ENV === 'production' ? 'https://codesense-ai-4jnb.vercel.app' : BACKEND_URL);
+    : configuredFrontendUrl || (isProductionDeployment ? 'https://codesense-ai-4jnb.vercel.app' : BACKEND_URL);
 
 module.exports = {
   PORT,
