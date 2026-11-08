@@ -41,6 +41,10 @@ const FRONTEND_URL =
   isProductionDeployment && configuredFrontendUrl && isLocalUrl(configuredFrontendUrl)
     ? 'https://codesense-ai-4jnb.vercel.app'
     : configuredFrontendUrl || (isProductionDeployment ? 'https://codesense-ai-4jnb.vercel.app' : BACKEND_URL);
+const callbackUrl = (configuredUrl, provider) =>
+  isProductionDeployment && configuredUrl && isLocalUrl(configuredUrl)
+    ? `${BACKEND_URL}/api/auth/${provider}/callback`
+    : configuredUrl || `${BACKEND_URL}/api/auth/${provider}/callback`;
 
 module.exports = {
   PORT,
@@ -57,8 +61,8 @@ module.exports = {
   GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID || '',
   GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET || '',
   OAUTH_CALLBACK_URL: process.env.OAUTH_CALLBACK_URL || '',
-  GITHUB_CALLBACK_URL: process.env.GITHUB_CALLBACK_URL || process.env.OAUTH_CALLBACK_URL || `${BACKEND_URL}/api/auth/github/callback`,
+  GITHUB_CALLBACK_URL: callbackUrl(process.env.GITHUB_CALLBACK_URL || process.env.OAUTH_CALLBACK_URL, 'github'),
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || '',
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET || '',
-  GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL || process.env.OAUTH_CALLBACK_URL || `${BACKEND_URL}/api/auth/google/callback`,
+  GOOGLE_CALLBACK_URL: callbackUrl(process.env.GOOGLE_CALLBACK_URL || process.env.OAUTH_CALLBACK_URL, 'google'),
 };
