@@ -27,6 +27,12 @@ export async function loginUser(email: string, password: string) {
 }
 
 export async function logoutUser() {
-  await apiRequest("/auth/logout", { method: "POST" });
   setAccessToken("");
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 8000);
+  try {
+    await apiRequest("/auth/logout", { method: "POST", signal: controller.signal });
+  } finally {
+    clearTimeout(timeout);
+  }
 }

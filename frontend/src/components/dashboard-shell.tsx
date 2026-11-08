@@ -9,7 +9,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const [authenticated, setAuthenticated] = useState(false);
   const [user, setUser] = useState<AuthUser | null>(null);
-  const [logoutError, setLogoutError] = useState("");
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -19,7 +19,9 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         if (!getAccessToken() && !(await refreshAccessToken())) {
           throw new Error("Session expired");
         }
-        const response = await apiRequest<{ data?: { user: AuthUser }; user?: AuthUser }>("/auth/me");
+        const response = await apiRequest<{ data?: { user: AuthUser }; user?: AuthUser }>(
+          "/auth/me",
+        );
         const currentUser = response.data?.user ?? response.user;
         if (!currentUser) throw new Error("Unable to load your account");
         if (active) {
@@ -38,12 +40,15 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   }, [navigate]);
 
   async function handleLogout() {
-    setLogoutError("");
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
     try {
       await logoutUser();
-      await navigate({ to: "/login" });
-    } catch (err) {
-      setLogoutError(err instanceof Error ? err.message : "Unable to log out. Please try again.");
+      await navigate({ to: "/login", replace: true });
+    } catch {
+      window.location.assign(
+        `/login?error=${encodeURIComponent("You were signed out on this device, but the server could not confirm logout. Please try again.")}`,
+      );
     }
   }
 
@@ -69,19 +74,29 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         <Brand />
         <button
           onClick={handleLogout}
-          title="Logout"
-          aria-label="Logout"
-          className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+          title={isLoggingOut ? "Logging out…" : "Log out"}
+          aria-label={isLoggingOut ? "Logging out" : "Log out"}
+          aria-busy={isLoggingOut}
+          disabled={isLoggingOut}
+          className="flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-wait disabled:opacity-60"
           type="button"
         >
           <LogOut className="size-4" />
         </button>
       </header>
       <nav className="flex gap-2 overflow-x-auto border-b border-border p-3 text-sm text-muted-foreground lg:hidden">
-        <NavLink to="/dashboard" icon={BarChart3}>Dashboard</NavLink>
-        <NavLink to="/review" icon={FilePlus2}>New Review</NavLink>
-        <NavLink to="/history" icon={Clock3}>History</NavLink>
-        <NavLink to="/settings" icon={Settings}>Settings</NavLink>
+        <NavLink to="/dashboard" icon={BarChart3}>
+          Dashboard
+        </NavLink>
+        <NavLink to="/review" icon={FilePlus2}>
+          New Review
+        </NavLink>
+        <NavLink to="/history" icon={Clock3}>
+          History
+        </NavLink>
+        <NavLink to="/settings" icon={Settings}>
+          Settings
+        </NavLink>
       </nav>
       <aside className="hidden min-h-screen border-r border-border bg-panel-deep lg:flex lg:flex-col">
         <div className="border-b border-border p-6">
@@ -106,28 +121,25 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           <div className="grid size-11 place-items-center rounded-full bg-gradient-to-br from-primary to-code-purple font-semibold">
             {initials}
           </div>
-          <div className="flex-1">
-            <p className="font-medium">{displayName}</p>
-            <p className="text-sm text-muted-foreground">{user?.email}</p>
+          <div className="min-w-0 flex-1">
+            <p className="truncate font-medium">{displayName}</p>
+            <p className="truncate text-sm text-muted-foreground">{user?.email}</p>
           </div>
           <button
             onClick={handleLogout}
-            title="Logout"
-            className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground cursor-pointer"
+            title={isLoggingOut ? "Logging out…" : "Log out"}
+            aria-label={isLoggingOut ? "Logging out" : "Log out"}
+            aria-busy={isLoggingOut}
+            disabled={isLoggingOut}
+            className="flex h-11 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-lg px-3 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-wait disabled:opacity-60"
             type="button"
           >
             <LogOut className="size-4" />
+            <span className="text-sm">Log out</span>
           </button>
         </div>
       </aside>
-      <main>
-        {logoutError && (
-          <p role="alert" className="border-b border-danger/40 bg-danger/10 p-3 text-sm text-danger">
-            {logoutError}
-          </p>
-        )}
-        {children}
-      </main>
+      <main>{children}</main>
     </div>
   );
 }
