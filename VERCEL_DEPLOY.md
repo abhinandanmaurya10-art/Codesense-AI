@@ -72,12 +72,14 @@ In your GitHub OAuth App and Google Cloud OAuth client, register exactly these
 redirect URIs:
 
 ```text
-https://<backend-domain>/api/auth/github/callback
-https://<backend-domain>/api/auth/google/callback
+https://codesense-ai-5prf.vercel.app/api/auth/github/callback
+https://codesense-ai-5prf.vercel.app/api/auth/google/callback
 ```
 
 For Google, also add `https://<frontend-domain>` to **Authorized JavaScript
 origins**. Update the matching Vercel variables and redeploy the backend.
+Do not use a `localhost` callback for a deployed login: the OAuth provider will
+send the browser to the caller's own computer instead of the live app.
 
 ## 5. Verify
 

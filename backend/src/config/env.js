@@ -15,12 +15,28 @@ const required = (name, fallback) => {
 };
 
 const PORT = Number(process.env.PORT || 5001);
-const BACKEND_URL = process.env.BACKEND_URL || process.env.BASE_URL || `http://localhost:${PORT}`;
+const NODE_ENV = process.env.NODE_ENV || 'development';
+const configuredBackendUrl = process.env.BACKEND_URL || process.env.BASE_URL;
+const vercelProductionHost = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+const deployedBackendUrl = vercelProductionHost
+  ? `https://${vercelProductionHost}`
+  : 'https://codesense-ai-5prf.vercel.app';
+const isLocalUrl = (value) =>
+  value.split(',').some((url) => /^https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?(?:\/|$)/i.test(url.trim()));
+const BACKEND_URL =
+  NODE_ENV === 'production' && configuredBackendUrl && isLocalUrl(configuredBackendUrl)
+    ? deployedBackendUrl
+    : configuredBackendUrl || (NODE_ENV === 'production' ? deployedBackendUrl : `http://localhost:${PORT}`);
+const configuredFrontendUrl = process.env.FRONTEND_URL;
+const FRONTEND_URL =
+  NODE_ENV === 'production' && configuredFrontendUrl && isLocalUrl(configuredFrontendUrl)
+    ? 'https://codesense-ai-4jnb.vercel.app'
+    : configuredFrontendUrl || (NODE_ENV === 'production' ? 'https://codesense-ai-4jnb.vercel.app' : BACKEND_URL);
 
 module.exports = {
   PORT,
   BACKEND_URL,
-  NODE_ENV: process.env.NODE_ENV || 'development',
+  NODE_ENV,
   MONGODB_URI: required('MONGODB_URI'),
   JWT_ACCESS_SECRET: required('JWT_ACCESS_SECRET'),
   JWT_REFRESH_SECRET: required('JWT_REFRESH_SECRET'),
@@ -28,7 +44,7 @@ module.exports = {
   JWT_REFRESH_EXPIRES: process.env.JWT_REFRESH_EXPIRES || '7d',
   GEMINI_API_KEY: process.env.GEMINI_API_KEY || '',
   GEMINI_MODEL: process.env.GEMINI_MODEL || 'models/gemini-2.5-flash',
-  FRONTEND_URL: process.env.FRONTEND_URL || BACKEND_URL || 'http://localhost:5173',
+  FRONTEND_URL,
   GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID || '',
   GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET || '',
   OAUTH_CALLBACK_URL: process.env.OAUTH_CALLBACK_URL || '',
