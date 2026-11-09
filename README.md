@@ -185,5 +185,4 @@ Issues and pull requests are welcome. For substantial changes, please open an is
 ## Try CodeSense AI
 
 Test and use the live application: **[Open CodeSense AI](https://codesense-ai-4jnb.vercel.app)**.
-Developers can also use the deployed [backend API](https://codesense-ai-5prf.vercel.app)
-and [health check](https://codesense-ai-5prf.vercel.app/api/health).
+
