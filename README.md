@@ -185,4 +185,10 @@ Issues and pull requests are welcome. For substantial changes, please open an is
 ## Try CodeSense AI
 
 Test and use the live application: **[Open CodeSense AI](https://codesense-ai-4jnb.vercel.app)**.
+---
 
+<p align="center">
+  Made with ❤️ by developers, for developers.
+  <br/>
+  <sub>CodeSense AI — Smarter Code Reviews, Powered by AI.</sub>
+</p>
