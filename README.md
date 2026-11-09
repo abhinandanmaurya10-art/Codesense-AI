@@ -1,307 +1,183 @@
-# CodeSense AI - AI-Powered Code Review Platform
+# CodeSense AI
 
-![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
-![License](https://img.shields.io/badge/license-MIT-blue)
-![Node Version](https://img.shields.io/badge/node-18%2B-green)
+**AI-powered code reviews in your browser.** CodeSense AI analyzes code with Google Gemini and helps developers identify bugs, security concerns, performance issues, and opportunities to improve readability.
 
-An intelligent, AI-powered code review platform that leverages Google Gemini to provide automated, detailed code feedback and suggestions.
+[![Live application](https://img.shields.io/badge/Live%20app-Open%20CodeSense%20AI-2563eb)](https://codesense-ai-4jnb.vercel.app)
+[![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
+
+## Live application
+
+**Frontend:** [codesense-ai-4jnb.vercel.app](https://codesense-ai-4jnb.vercel.app)
+
+**Backend API:** [codesense-ai-5prf.vercel.app](https://codesense-ai-5prf.vercel.app)
+
+**API health:** [Check backend health](https://codesense-ai-5prf.vercel.app/api/health)
+
+Create an account with email and password, or sign in with GitHub or Google. OAuth login requires the callback URLs listed in the [deployment guide](VERCEL_DEPLOY.md) to be registered with each provider.
 
 ## Features
 
-✨ **AI-Powered Reviews** - Google Gemini-powered code analysis  
-🔐 **Secure Authentication** - JWT + OAuth2 (GitHub, Google)  
-📝 **Multiple Input Methods** - Textarea, file upload, code marking  
-🎨 **Modern UI** - React + TypeScript + Tailwind CSS  
-🚀 **Production Ready** - Docker, rate limiting, input validation  
-📊 **Code Dashboard** - Review history, statistics, analytics  
-🌐 **Multi-Language Support** - JavaScript, Python, Java, C++, SQL, and more  
+- **AI code reviews** with findings, severity, line references, and an overall score.
+- **Flexible code input:** paste code, upload a file, or review marked code.
+- **Review history and dashboard:** browse previous reviews, view activity metrics, and track quality scores.
+- **Authentication:** email/password accounts plus GitHub and Google OAuth.
+- **Multiple languages:** JavaScript, TypeScript, Python, Go, Rust, Java, C++, C#, Ruby, PHP, C, and SQL.
+- **Secure API practices:** validated input, rate limits, protected routes, and hashed passwords.
 
-## Quick Start
+## Technology
 
-### Option 1: Docker (Recommended)
+| Area | Stack |
+| --- | --- |
+| Frontend | React 19, TypeScript, TanStack Start/Router, Vite, Tailwind CSS |
+| Backend | Node.js, Express, Passport, JWT, Zod |
+| Database | MongoDB with Mongoose |
+| Code analysis | Google Gemini API |
+| Deployment | Vercel |
+
+## Run locally
+
+### Requirements
+
+- Node.js 18 or newer and npm
+- MongoDB locally or a MongoDB Atlas cluster
+- A Google Gemini API key to run AI code reviews
+- OAuth app credentials if you want to test GitHub or Google login
+
+### 1. Clone the repository
 
 ```bash
-# Clone repository
-git clone <repository-url>
-cd CodeSense-AI-Powered-Code-Review-Platform
-
-# Configure backend
-cd backend
-cp .env.example .env.production
-# Edit .env.production with your OAuth credentials
-
-# Run with Docker Compose
-cd ..
-docker-compose up -d
-
-# Access at http://localhost
+git clone https://github.com/abhinandanmaurya10-art/Codesense-AI.git
+cd Codesense-AI
 ```
 
-### Option 2: Development Setup
+### 2. Configure and start the backend
 
-**Backend:**
 ```bash
 cd backend
 npm install
-cp .env.example .env
-npm run dev  # http://localhost:5001
 ```
 
-**Frontend:**
+Copy `backend/.env.example` to `backend/.env`, then set at least:
+
+```env
+MONGODB_URI=mongodb://localhost:27017/codesense-ai
+JWT_ACCESS_SECRET=replace-with-a-long-random-secret
+JWT_REFRESH_SECRET=use-a-different-long-random-secret
+FRONTEND_URL=http://localhost:5173
+BACKEND_URL=http://localhost:5001
+GEMINI_API_KEY=your-gemini-api-key
+```
+
+To enable local OAuth, also set the provider client IDs and secrets in `backend/.env`. The example file includes the localhost callback URLs; register those exact URLs in your OAuth provider settings for local development.
+
+Run the API:
+
+```bash
+npm run dev
+```
+
+The backend runs at `http://localhost:5001`.
+
+### 3. Configure and start the frontend
+
+In another terminal:
+
 ```bash
 cd frontend
 npm install
-npm run dev  # http://localhost:5173
 ```
 
-## Project Structure
+Copy `frontend/.env.example` to `frontend/.env` and set:
 
-```
-.
-├── backend/                 # Node.js Express API
-│   ├── src/
-│   │   ├── config/         # Configuration
-│   │   ├── controllers/    # Request handlers
-│   │   ├── models/         # MongoDB schemas
-│   │   ├── routes/         # API routes
-│   │   ├── services/       # Business logic
-│   │   └── middleware/     # Express middleware
-│   └── package.json
-│
-├── frontend/                # React + TypeScript
-│   ├── src/
-│   │   ├── components/     # React components
-│   │   ├── routes/         # Page routes
-│   │   ├── lib/            # API clients
-│   │   └── styles.css
-│   └── package.json
-│
-├── docker-compose.yml      # Docker configuration
-├── DEPLOYMENT.md           # Detailed deployment guide
-└── DEPLOY_QUICK_START.md  # Quick deployment guide
+```env
+VITE_API_BASE_URL=http://localhost:5001/api
 ```
 
-## Technology Stack
-
-### Backend
-- **Runtime**: Node.js 18+
-- **Framework**: Express.js
-- **Database**: MongoDB
-- **Authentication**: Passport.js, JWT
-- **AI**: Google Gemini API
-- **Validation**: Zod
-- **Security**: Helmet, CORS, Rate Limiting
-
-### Frontend
-- **Framework**: React 19
-- **Language**: TypeScript
-- **Build**: Vite 7
-- **Routing**: TanStack Router
-- **UI**: Radix UI + Tailwind CSS
-- **Forms**: React Hook Form
-
-## Prerequisites
-
-- Node.js 18+
-- npm 9+
-- MongoDB 7+ (local or Atlas)
-- OAuth credentials:
-  - [GitHub OAuth App](https://github.com/settings/developers)
-  - [Google OAuth 2.0](https://console.cloud.google.com)
-
-## Environment Configuration
-
-### Backend Setup
+Start the frontend:
 
 ```bash
-cd backend
-cp .env.example .env
+npm run dev
 ```
 
-Edit `.env` with:
-- MongoDB connection string
-- Gemini API key from [Google AI Studio](https://aistudio.google.com/apikey)
-- OAuth credentials (GitHub & Google)
-- JWT secrets
-
-### Frontend Setup
-
-```bash
-cd frontend
-cp .env.example .env
-```
-
-Set `VITE_API_BASE_URL` to your backend URL.
-
-## OAuth Setup
-
-### GitHub OAuth
-1. Go to https://github.com/settings/developers
-2. Create new OAuth App
-3. Set Authorization callback URL to your backend callback URL, for example `https://your-backend-domain.com/api/auth/github/callback`
-4. Copy Client ID & Secret to `.env`
-
-### Google OAuth
-1. Go to https://console.cloud.google.com
-2. Create OAuth 2.0 credentials (Web Application)
-3. Add redirect URI to your backend callback URL, for example `https://your-backend-domain.com/api/auth/google/callback`
-4. Copy Client ID & Secret to `.env`
-
-For detailed setup, see [OAUTH_SETUP.md](OAUTH_SETUP.md).
-
-## API Endpoints
-
-### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login
-- `POST /api/auth/refresh` - Refresh token
-- `GET /api/auth/github` - GitHub OAuth
-- `GET /api/auth/google` - Google OAuth
-
-### Code Reviews
-- `POST /api/reviews` - Create review
-- `GET /api/reviews` - List reviews
-- `GET /api/reviews/:id` - Get review
-- `DELETE /api/reviews/:id` - Delete review
-
-### Dashboard
-- `GET /api/dashboard/stats` - User statistics
-- `GET /api/dashboard/recent` - Recent reviews
-
-For complete API documentation, see [backend/README.md](backend/README.md).
-
-## Development
-
-### Install Dependencies
-```bash
-cd backend && npm install
-cd ../frontend && npm install
-```
-
-### Run Development Servers
-```bash
-# Terminal 1: Backend
-cd backend && npm run dev
-
-# Terminal 2: Frontend
-cd frontend && npm run dev
-
-# Terminal 3 (optional): Seed database
-cd backend && npm run seed
-```
-
-### Code Quality
-```bash
-# Frontend linting
-cd frontend && npm run lint && npm run format
-```
+Open the local URL printed by Vite (normally `http://localhost:5173`).
 
 ## Deployment
 
-### Docker Deployment
-```bash
-docker-compose up -d
+The production app is deployed as two Vercel projects: `backend` and `frontend`. Follow [VERCEL_DEPLOY.md](VERCEL_DEPLOY.md) for the project setup, environment variables, database connection, OAuth configuration, and verification steps.
+
+Production OAuth callback URLs:
+
+```text
+GitHub: https://codesense-ai-5prf.vercel.app/api/auth/github/callback
+Google: https://codesense-ai-5prf.vercel.app/api/auth/google/callback
 ```
 
-### Production Deployment
-See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed options:
-- Traditional VPS/EC2
-- Vercel Monorepo
-- DigitalOcean App Platform
+Never commit `.env` files, API keys, OAuth client secrets, database credentials, or JWT secrets. Configure production secrets in the hosting provider's environment-variable settings.
 
-## Production Checklist
+## API overview
 
-- [ ] Configure production `.env` files
-- [ ] Set strong JWT secrets
-- [ ] Enable HTTPS/SSL
-- [ ] Configure MongoDB authentication
-- [ ] Update OAuth callback URLs
-- [ ] Set up automated backups
-- [ ] Configure rate limiting
-- [ ] Enable error monitoring
-- [ ] Set up logging
-- [ ] Configure CDN for static assets
+The backend API is served under `/api`.
 
-## Security
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/health` | Backend and database health |
+| `POST` | `/api/auth/register` | Create an account |
+| `POST` | `/api/auth/login` | Sign in with email and password |
+| `POST` | `/api/auth/refresh` | Refresh the access token |
+| `POST` | `/api/auth/logout` | Sign out |
+| `GET` | `/api/auth/github` | Start GitHub sign-in |
+| `GET` | `/api/auth/google` | Start Google sign-in |
+| `GET` | `/api/auth/me` | Get the authenticated user |
+| `POST` | `/api/reviews` | Submit code for review |
+| `GET` | `/api/reviews` | List the user's reviews |
+| `GET` | `/api/reviews/:id` | Get a review |
+| `DELETE` | `/api/reviews/:id` | Delete a review |
+| `GET` | `/api/dashboard/stats` | Get dashboard metrics and score history |
 
-- ✅ Passwords hashed with bcryptjs
-- ✅ JWT tokens with expiration
-- ✅ OAuth CSRF protection
-- ✅ Input validation & sanitization
-- ✅ CORS restricted to frontend
-- ✅ Security headers via Helmet
-- ✅ Rate limiting on API routes
-- ✅ MongoDB injection protection
+See [backend/README.md](backend/README.md) for additional API and configuration details.
 
-## Performance
+## Project structure
 
-- Code-split bundles with Vite
-- Database indexes on key fields
-- Connection pooling
-- API rate limiting
-- Gzip compression
-- Static asset caching
-
-## Troubleshooting
-
-### Connection Issues
-```bash
-# Test MongoDB
-mongosh "mongodb://localhost:27017/codesense-ai"
-
-# Test API
-curl http://localhost:5001/api/health
+```text
+backend/
+  api/                 Vercel serverless API entry points
+  src/
+    config/            Environment and Passport configuration
+    controllers/       HTTP request handlers
+    middleware/        Authentication, validation, and rate limits
+    models/            MongoDB models
+    routes/            API route definitions
+    services/          Authentication and review logic
+frontend/
+  src/
+    components/        Shared UI and dashboard components
+    lib/               API and authentication helpers
+    routes/            Application pages
+VERCEL_DEPLOY.md       Production deployment guide
 ```
 
-### OAuth Errors
-- Verify callback URLs match exactly in OAuth apps
-- Check `BACKEND_URL` and `FRONTEND_URL` in `.env`
-- Ensure credentials are correct
+## Useful commands
 
-### Build Issues
-- Clear node_modules: `rm -rf node_modules`
-- Reinstall: `npm install`
-- Clear cache: `npm cache clean --force`
+```bash
+# Backend, from backend/
+npm run dev
+npm start
 
-## Contributing
-
-1. Fork repository
-2. Create feature branch
-3. Make changes
-4. Test thoroughly
-5. Submit pull request
+# Frontend, from frontend/
+npm run dev
+npm run lint
+npm run build
+```
 
 ## Documentation
 
-- [Backend README](backend/README.md)
-- [Frontend README](frontend/README.md)
-- [Deployment Guide](DEPLOYMENT.md)
-- [Quick Start Deploy](DEPLOY_QUICK_START.md)
-- [OAuth Setup](OAUTH_SETUP.md)
+- [Vercel deployment guide](VERCEL_DEPLOY.md)
+- [General deployment notes](DEPLOYMENT.md)
+- [Quick deployment guide](DEPLOY_QUICK_START.md)
+- [OAuth setup](OAUTH_SETUP.md)
+- [Backend API documentation](backend/README.md)
+- [Frontend documentation](frontend/README.md)
 
-## License
+## Contributing
 
-MIT License - See LICENSE file for details
-
-## Support
-
-For issues, questions, or suggestions:
-- Check existing documentation
-- Review GitHub issues
-- Create detailed bug reports
-
-## Roadmap
-
-- [ ] Advanced code metrics
-- [ ] Team collaboration features
-- [ ] Code quality standards
-- [ ] IDE extensions (VSCode, JetBrains)
-- [ ] API rate analytics
-- [ ] Custom review templates
-- [ ] Slack/Teams integration
-
----
-
-**Built with ❤️ for developers by developers**
-
-Last Updated: August 2026
+Issues and pull requests are welcome. For substantial changes, please open an issue first to discuss the proposed approach.
