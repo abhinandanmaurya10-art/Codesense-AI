@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 const User = require('../models/User');
 const ApiError = require('../utils/apiError');
-const { signAccessToken, signRefreshToken } = require('./tokenService');
+const { issueTokens } = require('./authService');
 
 /**
  * Normalize the GitHub profile email and username fields.
@@ -52,13 +52,7 @@ async function findOrCreateGitHubUser(profile) {
     });
   }
 
-  const accessToken = signAccessToken(user);
-  const refreshToken = signRefreshToken(user);
-  const tokens = [...(user.refreshTokens || []), refreshToken].slice(-5);
-  user.refreshTokens = tokens;
-  await user.save();
-
-  return { user: user.toPublic(), accessToken, refreshToken };
+  return issueTokens(user);
 }
 
 module.exports = {

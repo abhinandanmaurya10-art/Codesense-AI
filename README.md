@@ -38,7 +38,8 @@ Create an account with email and password, or sign in with GitHub or Google. OAu
 
 ### Requirements
 
-- Node.js 18 or newer and npm
+- Node.js 22.12 or newer and npm (the backend itself supports Node.js 18+)
+- Bun 1.3.14 or newer for the frontend
 - MongoDB locally or a MongoDB Atlas cluster
 - A Google Gemini API key to run AI code reviews
 - OAuth app credentials if you want to test GitHub or Google login
@@ -84,7 +85,7 @@ In another terminal:
 
 ```bash
 cd frontend
-npm install
+bun install --frozen-lockfile
 ```
 
 Copy `frontend/.env.example` to `frontend/.env` and set:
@@ -96,7 +97,7 @@ VITE_API_BASE_URL=http://localhost:5001/api
 Start the frontend:
 
 ```bash
-npm run dev
+bun run dev
 ```
 
 Open the local URL printed by Vite (normally `http://localhost:5173`).
@@ -164,9 +165,9 @@ npm run dev
 npm start
 
 # Frontend, from frontend/
-npm run dev
-npm run lint
-npm run build
+bun run dev
+bun run lint
+bun run build
 ```
 
 ## Documentation

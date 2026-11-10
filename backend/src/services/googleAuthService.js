@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 const User = require('../models/User');
 const ApiError = require('../utils/apiError');
-const { signAccessToken, signRefreshToken } = require('./tokenService');
+const { issueTokens } = require('./authService');
 
 /**
  * Extract email from Google profile
@@ -61,17 +61,7 @@ async function findOrCreateGoogleUser(profile) {
     });
   }
 
-  const accessToken = signAccessToken(user._id);
-  const refreshToken = signRefreshToken(user._id);
-
-  user.refreshTokens.push(refreshToken);
-  await user.save();
-
-  return {
-    user,
-    accessToken,
-    refreshToken,
-  };
+  return issueTokens(user);
 }
 
 module.exports = {

@@ -4,12 +4,13 @@
 //     componentTagger (dev-only), VITE_* env injection, @ path alias, React/TanStack dedupe,
 //     error logger plugins, and sandbox detection (port/host/strictPort).
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
+import { env } from "node:process";
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
-  // Produce Vercel serverless output instead of the Cloudflare default.
+  // Use Vercel by default; Docker selects the Node server preset at build time.
   nitro: {
-    preset: "vercel",
+    preset: env.NITRO_PRESET || "vercel",
   },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).

@@ -1,26 +1,28 @@
-# Build stage
-FROM node:18-alpine AS builder
+FROM oven/bun:1.3.14-alpine AS builder
 
 WORKDIR /app
 
-ARG VITE_API_BASE_URL
-ENV VITE_API_BASE_URL=${VITE_API_BASE_URL:-/api}
+ARG VITE_API_BASE_URL=/api
+ARG NITRO_PRESET=node-server
+ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
+ENV NITRO_PRESET=${NITRO_PRESET}
 
-COPY frontend/package*.json ./
-RUN npm ci
+COPY frontend/package.json frontend/bun.lock ./
+RUN bun install --frozen-lockfile
 
 COPY frontend ./
-RUN npm run build
+RUN bun run build
 
-# Runtime stage
-FROM nginx:alpine
+FROM node:22-alpine AS runtime
 
-# Copy built app
-COPY --from=builder /app/dist /usr/share/nginx/html
+WORKDIR /app
 
-# Copy nginx config
-COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
+ENV NODE_ENV=production
+ENV HOST=0.0.0.0
+ENV PORT=3000
 
-EXPOSE 80
+COPY --from=builder /app/.output ./.output
 
-CMD ["nginx", "-g", "daemon off;"]
+EXPOSE 3000
+
+CMD ["node", ".output/server/index.mjs"]

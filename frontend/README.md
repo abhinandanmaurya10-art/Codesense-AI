@@ -1,223 +1,58 @@
-# CodeSense AI - Frontend
+# CodeSense AI Frontend
 
-React + TypeScript frontend for AI-powered code review platform.
+React and TypeScript application built with TanStack Start/Router, Vite, and
+Tailwind CSS. The production Vercel build uses Nitro's Vercel preset; the
+Docker build uses Nitro's Node server preset.
 
-## Features
+## Requirements and setup
 
-- **Modern UI** - Built with Radix UI components and Tailwind CSS
-- **Routing** - TanStack Router for client-side routing
-- **Authentication** - JWT token management with OAuth support
-- **Code Review** - Interactive code editor and review workspace
-- **Responsive Design** - Mobile-friendly interface
-- **Type Safe** - Full TypeScript coverage
+- Node.js 22 or newer
+- Bun 1.3.14 or newer
+- The backend API, or the live backend URL
 
-## Technology Stack
-
-- **Framework**: React 19
-- **Language**: TypeScript
-- **Build Tool**: Vite 7.x
-- **Routing**: TanStack Router 1.x
-- **UI Components**: Radix UI
-- **Styling**: Tailwind CSS
-- **Forms**: React Hook Form
-- **HTTP Client**: Fetch API with custom wrapper
-- **Icons**: Lucide React
-
-## Installation
-
-```bash
-# Install dependencies
-npm install
-
-# Create .env file from example
+```sh
+bun install --frozen-lockfile
 cp .env.example .env
-
-# Start development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Preview production build
-npm preview
+bun run dev
 ```
 
-## Environment Variables
+Set `VITE_API_BASE_URL` in `.env`, for example
+`http://localhost:5001/api` for local development. Build and check the app with:
 
-See `.env.example` for template.
-
-**Required:**
-- `VITE_API_BASE_URL` - Backend API base URL (for local dev `http://localhost:5001/api`; for Vercel same-project deployment use `/api` or `https://your-project.vercel.app/api`)
-
-## Project Structure
-
+```sh
+bun run lint
+bun run build
+bun run preview
 ```
+
+The Vercel build output is `.vercel/output`. The file-based routes and generated
+route tree are under `src/routes/` and `src/routeTree.gen.ts`; do not edit the
+generated route tree by hand.
+
+## Application structure
+
+```text
 src/
-├── components/      # React components
-│   ├── ui/         # Radix UI component wrappers
-│   ├── site-header.tsx
-│   ├── dashboard-shell.tsx
-│   ├── review-workspace.tsx
-│   └── ...
-├── routes/         # Page components and routing
-│   ├── __root.tsx
-│   ├── index.tsx
-│   ├── login.tsx
-│   ├── dashboard.tsx
-│   ├── review.tsx
-│   └── auth/
-├── lib/            # Utilities and API clients
-│   ├── api.ts      # HTTP client
-│   ├── auth.ts     # Auth utilities
-│   ├── review.ts   # Review API
-│   └── utils.ts
-├── hooks/          # Custom React hooks
-├── router.tsx      # Router configuration
-└── styles.css      # Global styles
+  components/       Shared UI, dashboard, and review components
+  lib/              API, auth, error handling, and review helpers
+  routes/           TanStack Start file-based pages and OAuth callbacks
+  router.tsx        Router creation
+  server.ts         Server entry and error response handling
+  start.ts          TanStack Start middleware
+  styles.css        Global styles and Tailwind imports
 ```
 
-## Available Scripts
+The main pages are `/`, `/login`, `/dashboard`, `/review`, `/history`,
+`/reviews/:id`, and `/settings`. OAuth callbacks finish at
+`/auth/github/success` and `/auth/google/success`.
 
-```bash
-# Development
-npm run dev          # Start dev server on localhost:5173
+## API and authentication
 
-# Build
-npm run build        # Build for production
-npm run build:dev    # Build in development mode
+All frontend API calls use `src/lib/api.ts`. Configure
+`VITE_API_BASE_URL` to the backend API base URL ending in `/api`. For the Docker
+Compose setup, the browser uses the same-origin `/api` path through Nginx.
 
-# Preview & Testing
-npm preview          # Preview production build
-npm run lint         # Run ESLint
-npm run format       # Format code with Prettier
-```
-
-## Component Architecture
-
-### Layout Components
-- `SiteHeader` - Navigation and user menu
-- `DashboardShell` - Main app layout with sidebar
-
-### Feature Components
-- `ReviewWorkspace` - Code review interface
-- `CodeReviewDemo` - Demo/preview component
-- `GithubLoginButton` - GitHub OAuth button
-- `GoogleLoginButton` - Google OAuth button
-
-### Page Routes
-- `/` - Home page
-- `/login` - Login page
-- `/dashboard` - User dashboard
-- `/review` - Code review page
-- `/history` - Review history
-- `/settings` - User settings
-
-## Authentication Flow
-
-```
-Login Page
-   ↓
-Email/Password or OAuth
-   ↓
-Backend Authentication
-   ↓
-JWT Token Generation
-   ↓
-Store Token in localStorage
-   ↓
-Redirect to Dashboard
-```
-
-## API Integration
-
-All API calls go through `lib/api.ts` which handles:
-- Base URL configuration
-- Authentication headers
-- Error handling
-- Request/response transformation
-
-Example usage:
-```typescript
-import { createReview } from '@/lib/review';
-
-const result = await createReview({
-  code: '...',
-  language: 'javascript',
-  title: 'My Review'
-});
-```
-
-## Styling
-
-- **Tailwind CSS** for utility styles
-- **CSS Variables** for theme customization
-- **Radix UI** for unstyled components
-- Mobile-first responsive design
-
-## Type Safety
-
-- Full TypeScript coverage
-- Type definitions for API responses
-- Strict mode enabled
-- Component prop validation
-
-## Development Workflow
-
-1. Create feature branch
-2. Develop in `npm run dev`
-3. Test responsive design
-4. Run `npm run lint` and `npm run format`
-5. Build with `npm run build`
-6. Commit and push
-
-## Production Build
-
-```bash
-# Build optimized bundle
-npm run build
-
-# Output is in dist/ folder
-# Serve with: npx serve dist
-
-# Or use Nginx/Apache to serve
-```
-
-## Performance Optimization
-
-- Code splitting via Vite
-- Lazy loading with React.lazy
-- Image optimization
-- CSS minification
-- Tree-shaking unused code
-
-## Browser Support
-
-- Chrome/Edge latest 2 versions
-- Firefox latest 2 versions
-- Safari 14+
-- Mobile browsers
-
-## Troubleshooting
-
-**API Connection Issues:**
-- Verify `VITE_API_BASE_URL` in `.env`
-- Check backend is running on correct port
-- Check CORS configuration in backend
-
-**Authentication Issues:**
-- Clear localStorage and cookies
-- Check token expiration
-- Verify OAuth credentials in backend
-
-**Build Issues:**
-- Clear `node_modules` and reinstall
-- Check Node version is 18+
-- Clear Vite cache: `rm -rf .vite`
-
-## Deployment
-
-See `DEPLOYMENT.md` for production deployment guide.
-
-## Support
-
-For issues and questions, refer to the main project documentation.
+OAuth authorization is handled by the backend; its callback redirects to the
+matching frontend success route. See the root [OAuth guide](../OAUTH_SETUP.md)
+for provider configuration and [deployment guide](../VERCEL_DEPLOY.md) for
+Vercel setup.
