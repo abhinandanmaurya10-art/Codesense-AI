@@ -12,9 +12,6 @@ const googleAuthService = require('../services/googleAuthService');
  * It only uses Passport as an OAuth handshake helper.
  */
 function setupPassport() {
-  passport.serializeUser((user, done) => done(null, user));
-  passport.deserializeUser((user, done) => done(null, user));
-
   // GitHub OAuth Strategy
   if (env.GITHUB_CLIENT_ID && env.GITHUB_CLIENT_SECRET) {
     passport.use(
@@ -25,9 +22,8 @@ function setupPassport() {
           clientSecret: env.GITHUB_CLIENT_SECRET,
           callbackURL: env.GITHUB_CALLBACK_URL,
           scope: ['read:user', 'user:email'],
-          passReqToCallback: true,
         },
-        async (req, accessToken, refreshToken, profile, done) => {
+        async (_accessToken, _refreshToken, profile, done) => {
           try {
             const user = await githubAuthService.findOrCreateGitHubUser(profile);
             return done(null, user);
@@ -48,9 +44,8 @@ function setupPassport() {
           clientID: env.GOOGLE_CLIENT_ID,
           clientSecret: env.GOOGLE_CLIENT_SECRET,
           callbackURL: env.GOOGLE_CALLBACK_URL,
-          passReqToCallback: true,
         },
-        async (req, accessToken, refreshToken, profile, done) => {
+        async (_accessToken, _refreshToken, profile, done) => {
           try {
             const user = await googleAuthService.findOrCreateGoogleUser(profile);
             return done(null, user);

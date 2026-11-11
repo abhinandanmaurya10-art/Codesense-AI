@@ -19,9 +19,4 @@ async function requireAuth(req, _res, next) {
   }
 }
 
-const requireRole = (...roles) => (req, _res, next) => {
-  if (!req.user || !roles.includes(req.user.role)) return next(ApiError.forbidden());
-  return next();
-};
-
-module.exports = { requireAuth, requireRole };
+module.exports = { requireAuth };
