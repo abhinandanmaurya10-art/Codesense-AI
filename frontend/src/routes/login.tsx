@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { z } from "zod";
 import { Brand } from "@/components/brand";
 import { Button } from "@/components/ui/button";
@@ -31,7 +31,7 @@ function Login() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const oauthError = params.get('error');
+    const oauthError = params.get("error");
     if (oauthError) {
       setError(oauthError);
     }
@@ -104,7 +104,10 @@ function Login() {
             <GoogleLoginButton />
           </div>
           <p className="text-center text-sm text-muted-foreground">
-            New here? Continue with GitHub or Google to create your account.
+            New here?{" "}
+            <Link to="/signup" className="font-medium text-primary hover:underline">
+              Create an account
+            </Link>
           </p>
         </form>
       </div>

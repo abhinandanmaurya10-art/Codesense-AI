@@ -12,7 +12,7 @@ async function register({ name, email, password }) {
   if (existing) throw ApiError.conflict('An account with this email already exists');
 
   const passwordHash = await User.hashPassword(password);
-  const user = await User.create({ name, email, passwordHash });
+  const user = await User.create({ name: name || email.split('@')[0], email, passwordHash });
   return issueTokens(user);
 }
 

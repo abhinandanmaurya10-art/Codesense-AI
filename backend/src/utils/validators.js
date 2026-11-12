@@ -18,9 +18,9 @@ const SUPPORTED_LANGUAGES = [
 const REVIEW_SOURCES = ['textarea', 'uploaded', 'marked'];
 
 const registerSchema = z.object({
-  name: z.string().trim().min(2).max(80),
+  name: z.string().trim().min(2).max(80).optional(),
   email: z.string().trim().toLowerCase().email().max(255),
-  password: z.string().min(8).max(128),
+  password: z.string().min(8, 'Password must be at least 8 characters').max(128),
 });
 
 const loginSchema = z.object({

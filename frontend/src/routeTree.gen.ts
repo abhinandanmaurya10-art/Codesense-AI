@@ -15,6 +15,7 @@ import { Route as HistoryRouteImport } from './routes/history'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ReviewRouteImport } from './routes/review'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ReviewsIdRouteImport } from './routes/reviews/$id'
 import { Route as AuthGithubSuccessRouteImport } from './routes/auth/github/success'
@@ -50,6 +51,11 @@ const SettingsRoute = SettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -78,6 +84,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/review': typeof ReviewRoute
   '/settings': typeof SettingsRoute
+  '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/reviews/$id': typeof ReviewsIdRoute
   '/auth/github/success': typeof AuthGithubSuccessRoute
@@ -90,6 +97,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/review': typeof ReviewRoute
   '/settings': typeof SettingsRoute
+  '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/reviews/$id': typeof ReviewsIdRoute
   '/auth/github/success': typeof AuthGithubSuccessRoute
@@ -103,6 +111,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/review': typeof ReviewRoute
   '/settings': typeof SettingsRoute
+  '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/reviews/$id': typeof ReviewsIdRoute
   '/auth/github/success': typeof AuthGithubSuccessRoute
@@ -117,6 +126,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/review'
     | '/settings'
+    | '/signup'
     | '/sitemap.xml'
     | '/reviews/$id'
     | '/auth/github/success'
@@ -129,6 +139,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/review'
     | '/settings'
+    | '/signup'
     | '/sitemap.xml'
     | '/reviews/$id'
     | '/auth/github/success'
@@ -141,6 +152,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/review'
     | '/settings'
+    | '/signup'
     | '/sitemap.xml'
     | '/reviews/$id'
     | '/auth/github/success'
@@ -154,6 +166,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   ReviewRoute: typeof ReviewRoute
   SettingsRoute: typeof SettingsRoute
+  SignupRoute: typeof SignupRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ReviewsIdRoute: typeof ReviewsIdRoute
   AuthGithubSuccessRoute: typeof AuthGithubSuccessRoute
@@ -204,6 +217,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -242,6 +262,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   ReviewRoute: ReviewRoute,
   SettingsRoute: SettingsRoute,
+  SignupRoute: SignupRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   ReviewsIdRoute: ReviewsIdRoute,
   AuthGithubSuccessRoute: AuthGithubSuccessRoute,
